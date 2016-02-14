@@ -25,10 +25,35 @@ Ma	ona	implementować	następujące	funkcjonalności:
 class Book
 {
 
+    static private $connection;
+
+    static public function SetConnection(mysqli $newConnection){//z duzej litery funkcja bo jest statyczna
+        Book::$connection = $newConnection;
+    }
+
     private $id;
     private $name;
     private $author;
     private $description;
+
+    static public function CreateBook($newName, $newAuthor, $newDescription)
+    {
+
+        $sql = "INSERT INTO Books(name, author, description)
+                VALUES('$newName','$newAuthor', '$newDescription')";
+
+        $result = self::$connection->query($sql);
+        if ($result === TRUE) {
+            $newBook = new Book(self::$connection->insert_id, $newName, $newAuthor, $newDescription);
+            return $newBook;
+        }
+        return false;
+
+    }
+
+    static public function DeleteBoook(){
+       // TODO: create this function
+    }
 
 
     public function __construct($newId, $newName, $newAuthor, $newDescription)
@@ -80,5 +105,15 @@ class Book
             $this->description = $newDescription;
         }
     }
+
+    public function saveTODB(){
+        $sql= "UPDATE Users SET description='$this->description' WHERE id= $this->id";
+        $result = Book::$connection->query($sql);
+        if($result === TRUE){
+            return TRUE;
+        }
+        return FALSE;
+    }
+
 
 }
